@@ -7,6 +7,8 @@
 
 int main()
 {
+	FILE *arq;
+	char texto_str[20];// <- teste de leitura do arquivo
 	char filename[MAX_PATH];// Tamanho do directório
 
 	OPENFILENAME ofn;
@@ -21,10 +23,19 @@ int main()
 	ofn.Flags = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
 	ofn.lpstrInitialDir = ".";
 	
-
+	
 	if (GetOpenFileNameA(&ofn))
 	{
-		std::cout << "Você escolheu \"" << filename <<"Tamanho"<<sizeof(ofn) <<"\"\n";
+		arq = fopen(filename, "r");
+	}
+	while (fgets(texto_str, 20, arq) != NULL)
+	{
+		std::cout << texto_str<< std::endl;
+	}
+	if (arq == NULL)
+	{
+		printf("Erro na abertura do arquivo!");
+		return 1;
 	}
 	else
 	{
