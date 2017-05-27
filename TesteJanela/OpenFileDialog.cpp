@@ -9,28 +9,50 @@ int main()
 {
 	FILE *arq;
 	char texto_str[20];// <- teste de leitura do arquivo
-	char filename[MAX_PATH];// Tamanho do directório
+	char filename[MAX_PATH];// Tamanho do direct�rio
 
 	OPENFILENAME ofn;
 	ZeroMemory(&filename, sizeof(filename));
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = NULL;  
+	ofn.hwndOwner = NULL;
 	ofn.lpstrFilter = "Text Files\0*.txt\0Any File\0*.*\0"; // Tipos de arquivos 
 	ofn.lpstrFile = filename;
 	ofn.nMaxFile = MAX_PATH;
 	ofn.lpstrTitle = "Editor ";
-	ofn.Flags = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
+	ofn.Flags = OFN_DONTADDTORECENT;
 	ofn.lpstrInitialDir = ".";
-	
-	
+	int cont;
+
+	if (GetSaveFileNameA(&ofn))
+	{
+		std::string n = (std::string)filename;
+		if (n.substr(n.length() - 4) != ".txt")
+		{
+			n += ".txt";
+		}
+		arq = fopen(n.c_str(), "w+");
+		fprintf(arq, "CARALHO\nPORRA\0");
+		fclose(arq);
+	}
 	if (GetOpenFileNameA(&ofn))
 	{
 		arq = fopen(filename, "r");
+		/*char l[250];
+		fscanf_s(arq, "%c", l);
+		fclose(arq);
+		std::cout << l << std::endl;*/
 	}
-	while (fgets(texto_str, 20, arq) != NULL)
+	if (arq != NULL)
 	{
-		std::cout << texto_str<< std::endl;
+		fseek(arq, 0, SEEK_END);
+		cont = ftell(arq);
+		fseek(arq, SEEK_END - 2, SEEK_SET);
+	}
+	while (fgets(texto_str, cont, arq) != NULL)
+	{
+
+		std::cout << texto_str << std::endl;
 	}
 	if (arq == NULL)
 	{
@@ -39,7 +61,7 @@ int main()
 	}
 	else
 	{
-		
+
 		switch (CommDlgExtendedError())
 		{
 		case CDERR_DIALOGFAILURE: std::cout << "CDERR_DIALOGFAILURE\n";   break;
@@ -60,4 +82,5 @@ int main()
 		default: std::cout << "You cancelled.\n";
 		}
 	}
+	system("pause");
 }
